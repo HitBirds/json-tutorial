@@ -126,7 +126,10 @@ static void lept_encode_utf8(lept_context* c, unsigned u) {
 }
 
 #define STRING_ERROR(ret) do { c->top = head; return ret; } while(0)
-
+/*
+* 拆分parse_string为parse_object里object里每个member的key的解析做准备
+* 解析string时 也是先将char放到context的stack里，最后遇到"返回stack头指针给set_string进行深拷贝
+*/
 static int lept_parse_string_raw(lept_context* c,char **str,size_t *s_len)
 {
     size_t head = c->top, len;
@@ -237,7 +240,9 @@ static int lept_parse_array(lept_context* c, lept_value* v) {
         lept_free((lept_value*)lept_context_pop(c, sizeof(lept_value)));
     return ret;
 }
-
+/*
+* 解析完object里的每一个member后对member进行压栈
+*/
 static int lept_parse_object(lept_context* c, lept_value* v) {
     size_t size;
     lept_member m;
@@ -266,6 +271,7 @@ static int lept_parse_object(lept_context* c, lept_value* v) {
             char *m_str=NULL;
             size_t m_k_len=0;
             ret = lept_parse_string_raw(c,&m_str,&m_k_len);
+            /*由于lept_set_string只能给lept_value类型使用，所以对于member的key(char*类型)得自己手动深拷贝*/
             if(ret != LEPT_PARSE_OK)break;
             else {
                 memcpy(m.k =(char*)malloc(m_k_len), m_str, m_k_len);

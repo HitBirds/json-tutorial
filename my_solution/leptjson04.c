@@ -148,7 +148,9 @@ static void lept_encode_utf8(lept_context* c, unsigned u) {
 }
 
 #define STRING_ERROR(ret) do { c->top = head; return ret; } while(0)
-
+/*
+* 添加对文本里 unicode字符的解析转为 utf8方式编码的的 c-string unicode码分要判断是不是代理型的码 不是就直接转换8bit utf8
+*/
 static int lept_parse_string(lept_context* c, lept_value* v) {
     size_t head = c->top, len;
     unsigned u;

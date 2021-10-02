@@ -46,7 +46,9 @@ static void lept_parse_whitespace(lept_context* c) {
         p++;
     c->json = p;
 }
-
+/*
+* 合并null,false,true。统一为字面即类型
+*/
 static int lept_parse_literal(lept_context* c, lept_value* v, const char* literal, lept_type type) {
     size_t i;
     EXPECT(c, literal[0]);
@@ -85,7 +87,11 @@ static int lept_parse_number(lept_context* c, lept_value* v) {
     c->json = p;
     return LEPT_PARSE_OK;
 }
-
+/*
+* 对一段c风格字符串(符合c-string语法)编写的一段文本 判断其是否符合json-string类型的值的规范
+* 并将这段json-string直接翻译成c-string c语言读取文本时按char读取,json的\/被c语法读取为\\/
+* 0x20以下是控制字符不属于json-string类型
+*/
 static int lept_parse_string(lept_context* c, lept_value* v) {
     size_t head = c->top, len;
     const char* p;

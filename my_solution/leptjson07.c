@@ -345,7 +345,9 @@ int lept_parse(lept_value* v, const char* json) {
     free(c.stack);
     return ret;
 }
-
+/*
+* 将utf-8编码的c风格字符串 转为unicode文本形式
+*/
 static void lept_stringify_string(lept_context* c, const char* s, size_t len) {
     assert(s != NULL);
     /* 将解析的c存储的串 转为json文本*/
@@ -370,7 +372,7 @@ static void lept_stringify_string(lept_context* c, const char* s, size_t len) {
             *p++ = '\\';
             break;
         case '/':
-            /* *p++ = '\\';为什么json不用转义符呢 */
+            /* *p++ = '\\';为什么json不用转义符呢？ JSON规范说您可以转义正斜线，但不必这样做。*/
             *p++ = '/';
             break;
         case '\b':
@@ -395,10 +397,7 @@ static void lept_stringify_string(lept_context* c, const char* s, size_t len) {
             break;
         default:
             /* 额...因为json里unicode码(BMP和非BMP)已经被转换成了utf-8编码的c风格字符串
-             * 我们在读入ch的时候,一个ch是不是utf-8码点的一部分我也不知道
-             * 但是打印char*的c函数调用的操作系统API知道
-             * 所以终端上显示的一个字符对应着c内存里的多少个byte是由操作系统判断的
-             * 因为一个ascii码只要7个码点 所以大于0111 1111的char可能都会被系统按照utf-8的unicode码点尝试解析
+             * 按utf-8形式存储码点
             */
             {
             static const char hex_digits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };

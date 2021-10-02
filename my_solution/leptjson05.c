@@ -183,6 +183,11 @@ static int lept_parse_string(lept_context* c, lept_value* v) {
 
 static int lept_parse_value(lept_context* c, lept_value* v);
 
+/*
+* 按照array的语法ws value ws处理array里的每一个element 
+* 先将处理的一个element放到context的stack里面，等遇到array结束符']'的时候再将stack从头到尾拷贝到v->u.a.e里(浅拷贝只记录指针值)
+* 当解析出错的时候释放掉context->stack里的元素(深度释放)
+*/
 static int lept_parse_array(lept_context* c, lept_value* v) {
     size_t size = 0;
     int ret;

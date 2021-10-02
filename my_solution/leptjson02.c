@@ -46,6 +46,12 @@ static int lept_parse_null(lept_context* c, lept_value* v) {
 #define IS_DIGIT1TO9(ch) (ch > '0' && ch <= '9' )
 #define IS_DIGIT(ch) (ch >= '0' && ch <='9')
 
+/*
+* 按照number的语法类型解析c风格字符串c->json是否符合json里number的语法
+* 不同的编译器对double类型的相等判定方式不同
+* 最好按照两数差小于等于某个值来判定double是否相同
+*/
+
 static int lept_parse_number(lept_context* c, lept_value* v) {
     char* end;
     char* begin = c->json;
